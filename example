@@ -1,0 +1,43 @@
+#Подключение к PDO через класс
+
+class Database extends PDO{
+    function __construct(){
+        /*$server = $_SERVER['SERVER_ADDR']; // адрес сервера на котором находится код
+        $username = 'root';
+        $password = 'root';
+        $dbname = 'university';
+        $charset = 'utf8';
+        parent::__construct("mysql:host=$server;dbname=$dbname;charset=utf8", "$username", "$password");*/
+        parent::__construct("mysql:host=localhost;dbname=u1251455_uploadimage;charset=utf8", "u1251455_root", "1z2x3c4v"); 
+    }
+}
+#Данные можно поместить или в отдельные переменные или напрямую в construct PDO
+#Далее выполняем запросы к PDO из классов наследников Database
+class Model {
+    function __construct(){
+        session_start();
+        $this->database = new Database;
+        
+        $search_email = "SELECT * FROM users WHERE email=(:email)";
+            $pdo = $this->database->prepare($search_email);
+            $pdo->bindParam(":email", $_SESSION['email']);
+            $pdo->execute();
+            $request = $pdo->fetch();
+            /*Выполнение параметризованного запроса в БД*/
+    }
+}
+
+#Подключение к PDO без класса
+$host = '127.0.0.1';
+$db   = 'test';
+$user = 'root';
+$pass = '';
+$charset = 'utf8';
+
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$opt = [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES   => false,
+];
+$pdo = new PDO($dsn, $user, $pass, $opt);
